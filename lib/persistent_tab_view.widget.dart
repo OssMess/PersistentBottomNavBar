@@ -10,35 +10,37 @@ part of persistent_bottom_nav_bar;
 ///To learn more, check out the [Readme](https://github.com/BilalShahid13/PersistentBottomNavBar).
 
 class PersistentTabView extends PersistentTabViewBase {
-  PersistentTabView(this.context,
-      {required this.screens,
-      final Key? key,
-      final List<PersistentBottomNavBarItem>? items,
-      this.controller,
-      final double navBarHeight = kBottomNavigationBarHeight,
-      this.margin = EdgeInsets.zero,
-      this.backgroundColor = CupertinoColors.white,
-      final ValueChanged<int>? onItemSelected,
-      final NeumorphicProperties? neumorphicProperties,
-      this.floatingActionButton,
-      final NavBarPadding padding = const NavBarPadding.all(null),
-      final NavBarDecoration decoration = const NavBarDecoration(),
-      this.resizeToAvoidBottomInset = false,
-      this.bottomScreenMargin,
-      this.selectedTabScreenContext,
-      this.hideNavigationBarWhenKeyboardShows = true,
-      final bool popAllScreensOnTapOfSelectedTab = true,
-      final bool popAllScreensOnTapAnyTabs = false,
-      final PopActionScreensType popActionScreens = PopActionScreensType.all,
-      this.confineInSafeArea = true,
-      this.onWillPop,
-      this.stateManagement = true,
-      this.handleAndroidBackButtonPress = true,
-      final ItemAnimationProperties? itemAnimationProperties,
-      this.hideNavigationBar,
-      this.screenTransitionAnimation = const ScreenTransitionAnimation(),
-      final NavBarStyle navBarStyle = NavBarStyle.style1})
-      : assert(items != null,
+  PersistentTabView(
+    this.context, {
+    required this.appBar,
+    required this.screens,
+    final Key? key,
+    final List<PersistentBottomNavBarItem>? items,
+    this.controller,
+    final double navBarHeight = kBottomNavigationBarHeight,
+    this.margin = EdgeInsets.zero,
+    this.backgroundColor = CupertinoColors.white,
+    final ValueChanged<int>? onItemSelected,
+    final NeumorphicProperties? neumorphicProperties,
+    this.floatingActionButton,
+    final NavBarPadding padding = const NavBarPadding.all(null),
+    final NavBarDecoration decoration = const NavBarDecoration(),
+    this.resizeToAvoidBottomInset = false,
+    this.bottomScreenMargin,
+    this.selectedTabScreenContext,
+    this.hideNavigationBarWhenKeyboardShows = true,
+    final bool popAllScreensOnTapOfSelectedTab = true,
+    final bool popAllScreensOnTapAnyTabs = false,
+    final PopActionScreensType popActionScreens = PopActionScreensType.all,
+    this.confineInSafeArea = true,
+    this.onWillPop,
+    this.stateManagement = true,
+    this.handleAndroidBackButtonPress = true,
+    final ItemAnimationProperties? itemAnimationProperties,
+    this.hideNavigationBar,
+    this.screenTransitionAnimation = const ScreenTransitionAnimation(),
+    final NavBarStyle navBarStyle = NavBarStyle.style1,
+  })  : assert(items != null,
             "Items can only be null in case of custom navigation bar style. Please add the items!"),
         assert(assertMidButtonStyles(navBarStyle, items!.length),
             "NavBar styles 15-18 only accept 3 or 5 PersistentBottomNavBarItem items."),
@@ -84,6 +86,7 @@ class PersistentTabView extends PersistentTabViewBase {
     this.context, {
     required final Widget customWidget,
     required final int itemCount,
+    required this.appBar,
     required this.screens,
     final Key? key,
     this.controller,
@@ -128,6 +131,8 @@ class PersistentTabView extends PersistentTabViewBase {
           isCustomWidget: true,
           decoration: const NavBarDecoration(),
         );
+
+  final Widget? appBar;
 
   ///Screens that will be displayed on tapping of persistent bottom navigation bar items.
   @override
@@ -410,9 +415,9 @@ class _PersistentTabViewState extends State<PersistentTabView> {
             routes: widget.routeAndNavigatorSettings!.routes,
           )
         : widget.items![index].routeAndNavigatorSettings;
-
+    late Widget body;
     if (widget.floatingActionButton != null) {
-      return Stack(
+      body = Stack(
         fit: StackFit.expand,
         children: <Widget>[
           SizedBox.expand(
@@ -438,7 +443,7 @@ class _PersistentTabViewState extends State<PersistentTabView> {
         ],
       );
     } else if (widget.navBarStyle == NavBarStyle.style15) {
-      return Stack(
+      body = Stack(
         fit: StackFit.expand,
         children: <Widget>[
           SizedBox.expand(
@@ -504,7 +509,7 @@ class _PersistentTabViewState extends State<PersistentTabView> {
         ],
       );
     } else if (widget.navBarStyle == NavBarStyle.style16) {
-      return Stack(
+      body = Stack(
         fit: StackFit.expand,
         children: <Widget>[
           SizedBox.expand(
@@ -567,7 +572,7 @@ class _PersistentTabViewState extends State<PersistentTabView> {
         ],
       );
     } else {
-      return CustomTabView(
+      body = CustomTabView(
           routeAndNavigatorSettings: routeAndNavigatorSettings,
           builder: (final screenContext) {
             _contextList[index] = screenContext;
@@ -578,6 +583,12 @@ class _PersistentTabViewState extends State<PersistentTabView> {
             return Material(child: widget.screens[index]);
           });
     }
+    return Column(
+      children: [
+        if (widget.appBar != null) widget.appBar!,
+        body,
+      ],
+    );
   }
 
   Widget navigationBarWidget() => PersistentTabScaffold(
