@@ -586,7 +586,7 @@ class _PersistentTabViewState extends State<PersistentTabView> {
     return Column(
       children: [
         if (widget.appBar != null) widget.appBar!,
-        body,
+        Expanded(child: body),
       ],
     );
   }
